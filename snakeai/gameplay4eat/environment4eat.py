@@ -396,19 +396,16 @@ class Environment4Eat(object):
 
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
-            self.snake.grow()
             self.fruit.remove(self.snake.head)
             # self.generate_fruit()
             # old_tail = None
             reward += self.rewards['ate_fruit']
             self.stats.fruits_eaten += 1
         elif self.be_poison(self.snake.peek_next_move()):
-            self.snake.move()
             self.stats.poisons_eaten += 1
         # If not, just move forward.
-        else:
-            self.snake.move()
-            reward += self.rewards['timestep']
+
+        self.snake.move()
 
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
