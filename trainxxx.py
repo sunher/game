@@ -126,6 +126,13 @@ def create_dqn_model(env, num_last_frames):
     ))
     model.add(Activation('relu'))
     model.add(Conv2D(
+        192,
+        kernel_size=(3, 3),
+        strides=(1, 1),
+        data_format='channels_first'
+    ))
+    model.add(Activation('relu'))
+    model.add(Conv2D(
         256,
         kernel_size=(3, 3),
         strides=(1, 1),
