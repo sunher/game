@@ -325,9 +325,10 @@ class Environment4Eat(object):
 
     def generate_wall(self):
         # emptyNum = len(self.field._empty_cells)
-        randnum = np.random.randint(10, 50)
-        wallPos = random.choice(self.field.get_empty_cell(), k=randnum)
-        for pos in wallPos:
+        randnum = np.random.randint(10, 60)
+        i=0
+        while(i<randnum):
+            pos = random.choice(self.field.get_empty_cell())
             self.field[pos] = CellType.WALL
 
     def generate_emeny(self, position=None):
