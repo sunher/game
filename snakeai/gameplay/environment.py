@@ -224,48 +224,24 @@ class Environment(object):
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
-        if not self.is_alive():
+        if not self.is_alive()  or self.fruit.__len__() == 0:
+            reward -= self.fruit.__len__()
             if self.has_hit_wall():
+                reward -= 0.7
                 self.stats.termination_reason = 'hit_wall'
             if self.has_hit_own_body():
                 self.stats.termination_reason = 'hit_own_body'
 
-            self.field[self.snake.head] = CellType.SNAKE_HEAD
-            self.is_game_over = True
-            if len(self.fruit) != 0:
-                if self.stats.fruits_eaten == 0:
-                    reward = self.rewards['died']
-                    if self.stats.poisons_eaten != 0:
-                        if (self.be_poison(old_tail)):
-                            if (self.be_poison(old_head)):
-                                reward -= 0.91
-                        else:
-                            if (self.be_poison(old_head)):
-                                reward -= 0.91
-                            reward -= 0.91
-                else:
-                    if self.stats.poisons_eaten != 0:
-                        if (self.be_poison(old_tail)):
-                            if (self.be_poison(old_head)):
-                                reward -= 0.91
-                        else:
-                            if (self.be_poison(old_head)):
-                                reward -= 0.91
-                            reward -= 0.91
-                    reward += 0.73 * self.get_wall_num(old_head)
-            else:
-                if self.stats.poisons_eaten != 0:
-                    if (self.be_poison(old_tail)):
-                        if (self.be_poison(old_head)):
-                            reward -= 0.91
-                    else:
-                        if (self.be_poison(old_head)):
-                            reward -= 0.91
-                        reward -= 0.91
-                reward += 0.73 * self.get_wall_num(old_head)
+            if self.snake.length == 2 or self.snake.length == 1:
+                reward -= 2
 
-            if self.snake.length == 2:
-                reward -= 0.91
+            if self.stats.poisons_eaten != 0:
+                reward -= 2
+
+            if (self.be_poison(old_head)):
+                reward -= 1
+
+
         # Exceeded the limit of moves?
         if self.timestep_index >= self.max_step_limit:
             self.is_game_over = True
