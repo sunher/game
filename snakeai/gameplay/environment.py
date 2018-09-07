@@ -209,15 +209,6 @@ class Environment(object):
             self.stats.poisons_eaten += 1
         # If not, just move forward.
         else:
-            if len(self.fruit) != 0:
-                if (abs((self.enemy - self.snake.head).x) + abs((self.enemy - self.snake.head).y)) < (
-                        abs((self.enemy - old_head).x) + abs((self.enemy - old_head).y)):
-                    reward += 0.03
-                elif (abs((self.enemy - self.snake.head).x) + abs((self.enemy - self.snake.head).y)) == (
-                        abs((self.enemy - old_head).x) + abs((self.enemy - old_head).y)):
-                    reward -= 0
-                else:
-                    reward -= 0.03
             self.snake.move()
             reward += self.rewards['timestep']
 
