@@ -195,7 +195,7 @@ class Environment(object):
 
         old_head = self.snake.head
         old_tail = self.snake.tail
-
+        print(self.snake.head)
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
             self.fruit.remove(self.snake.peek_next_move())
@@ -209,6 +209,7 @@ class Environment(object):
 
         self.snake.move()
         reward += self.rewards['timestep']
+        print(self.snake.head)
 
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
