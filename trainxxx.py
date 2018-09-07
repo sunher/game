@@ -132,7 +132,7 @@ def create_dqn_model(env, num_last_frames):
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.1))
     # Dense layers.
     model.add(Flatten())
     model.add(Dense(1024))
