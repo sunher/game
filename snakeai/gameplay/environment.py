@@ -78,7 +78,7 @@ class Environment(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=0,
-            is_episode_end=self.is_game_over
+            is_episode_self.is_game_over
         )
 
         self.record_timestep_stats(result)
@@ -92,7 +92,7 @@ class Environment(object):
         if self.verbose >= 1 and self.stats_file is None:
             self.stats_file = open('snake-env-{timestamp}.csv', 'w')
             stats_csv_header_line = self.stats.to_dataframe()[:0].to_csv(index=None)
-            print(stats_csv_header_line, 'self.stats_file, '', flush=True)
+            print(stats_csv_header_line, self.stats_file, '', flush=True)
 
         # Create a blank debug log file.
         if self.verbose >= 2 and self.debug_file is None:
@@ -102,15 +102,15 @@ class Environment(object):
         self.stats.timesteps_survived = self.timestep_index
 
         if self.verbose >= 2:
-            print(result, 'self.debug_file)
+            print(result, self.debug_file)
 
         # Log episode stats if the appropriate verbosity level is set.
         if result.is_episode_end:
             if self.verbose >= 1:
                 stats_csv_line = self.stats.to_dataframe().to_csv(header=False, index=None)
-                print(stats_csv_line, 'self.stats_file, '', flush=True)
+                print(stats_csv_line, self.stats_file, '', flush=True)
             if self.verbose >= 2:
-                print(self.stats, 'self.debug_file)
+                print(self.stats, self.debug_file)
 
     def get_observation(self):
         """ Observe the state of the environment. """
@@ -274,7 +274,7 @@ class Environment(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=reward,
-            is_episode_end=self.is_game_over
+            is_episode_self.is_game_over
         )
 
         self.record_timestep_stats(result)
@@ -337,7 +337,7 @@ class TimestepResult(object):
             ''.join(str(cell) for cell in row)
             for row in self.observation
         ])
-        return '{field_map}\nR = {self.reward}   end={self.is_episode_end}\n'
+        return '{field_map}\nR = {self.reward}   {self.is_episode_end}\n'
 
 
 class EpisodeStatistics(object):
