@@ -198,7 +198,7 @@ class Environment(object):
 
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
-            self.fruit.remove(self.snake.head)
+            self.fruit.remove(self.snake.peek_next_move())
             # self.generate_fruit()
             # old_tail = None
             reward += self.rewards['ate_fruit']
