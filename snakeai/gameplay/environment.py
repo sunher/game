@@ -90,13 +90,13 @@ class Environment(object):
 
         # Write CSV header for the stats file.
         if self.verbose >= 1 and self.stats_file is None:
-            self.stats_file = open(f'snake-env-{timestamp}.csv', 'w')
+            self.stats_file = open('snake-env-{timestamp}.csv', 'w')
             stats_csv_header_line = self.stats.to_dataframe()[:0].to_csv(index=None)
             print(stats_csv_header_line, file=self.stats_file, end='', flush=True)
 
         # Create a blank debug log file.
         if self.verbose >= 2 and self.debug_file is None:
-            self.debug_file = open(f'snake-env-{timestamp}.log', 'w')
+            self.debug_file = open('snake-env-{timestamp}.log', 'w')
 
         self.stats.record_timestep(self.current_action, result)
         self.stats.timesteps_survived = self.timestep_index
@@ -337,7 +337,7 @@ class TimestepResult(object):
             ''.join(str(cell) for cell in row)
             for row in self.observation
         ])
-        return f'{field_map}\nR = {self.reward}   end={self.is_episode_end}\n'
+        return '{field_map}\nR = {self.reward}   end={self.is_episode_end}\n'
 
 
 class EpisodeStatistics(object):
@@ -374,7 +374,7 @@ class EpisodeStatistics(object):
             'termination_reason': self.termination_reason,
         }
         flat_stats.update({
-            f'action_counter_{action}': self.action_counter.get(action, 0)
+            'action_counter_{action}': self.action_counter.get(action, 0)
             for action in ALL_SNAKE_ACTIONS
         })
         return flat_stats

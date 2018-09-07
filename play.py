@@ -93,7 +93,7 @@ def create_agent(name, model):
     elif name == 'random':
         return RandomActionAgent()
 
-    raise KeyError(f'Unknown agent type: "{name}"')
+    raise KeyError('Unknown agent type: "{name}"')
 
 
 def play_cli(env, agent, num_episodes=10):

@@ -136,7 +136,7 @@ class PyGameGUI:
             # Render.
             self.render()
             score = self.env.snake.length - self.env.initial_snake_length
-            pygame.display.set_caption(f'Snake  [Score: {score:02d}]')
+            pygame.display.set_caption('Snake  [Score: {score:02d}]')
             pygame.display.update()
             self.fps_clock.tick(self.FPS_LIMIT)
 

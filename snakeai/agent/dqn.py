@@ -118,7 +118,7 @@ class DeepQNetworkAgent(AgentBase):
                     loss += float(self.model.train_on_batch(inputs, targets))
 
             if checkpoint_freq and (episode % checkpoint_freq) == 0:
-                self.model.save(f'dqn-{episode:08d}.model')
+                self.model.save('dqn-{episode:08d}.model')
 
             if exploration_rate > min_exploration_rate:
                 exploration_rate -= exploration_decay

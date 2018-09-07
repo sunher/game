@@ -204,7 +204,7 @@ class Field(object):
                 if self[(x, y)] == CellType.EMPTY
             }
         except KeyError as err:
-            raise ValueError(f'Unknown level map symbol: "{err.args[0]}"')
+            raise ValueError('Unknown level map symbol: "{err.args[0]}"')
 
     def find_snake_head(self):
         """ Find the snake's head on the field. """
