@@ -230,7 +230,7 @@ class EnvironmentAttackAndHide(object):
             if (self.be_poison(old_head)):
                 reward -= 0.5
 
-        self.is_game_over = True
+            self.is_game_over = True
         # Exceeded the limit of moves?
         if self.timestep_index >= self.max_step_limit:
             self.is_game_over = True
