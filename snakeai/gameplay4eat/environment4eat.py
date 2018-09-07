@@ -326,7 +326,7 @@ class Environment4Eat(object):
     def generate_wall(self):
         # emptyNum = len(self.field._empty_cells)
         randnum = np.random.randint(10, 50)
-        wallPos = random.choices(self.field.get_empty_cell(), k=randnum)
+        wallPos = random.choice(self.field.get_empty_cell(), k=randnum)
         for pos in wallPos:
             self.field[pos] = CellType.WALL
 
