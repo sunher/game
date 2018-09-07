@@ -1,0 +1,1 @@
+/usr/local/anaconda3/envs/py365/bin/python /aiml/code/trainxxx.py  --level1 /aiml/code/snakeai/levels/1.json --level2 /aiml/code/snakeai/levels/2.json --level3 /aiml/code/snakeai/levels/1.json --level4 /aiml/code/snakeai/levels/2.json --level5 /aiml/code/snakeai/levels/1.json --level6 /aiml/code/snakeai/levels/blank.json  --num-episodes 300000
