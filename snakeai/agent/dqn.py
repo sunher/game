@@ -123,12 +123,13 @@ class DeepQNetworkAgent(AgentBase):
             if exploration_rate > min_exploration_rate:
                 exploration_rate -= exploration_decay
 
-            summary = 'Episode {:5d}/{:5d} | Loss {:8.4f} | Exploration {:.2f} | ' + \
-                      'Fruits {:2d} | Timesteps {:4d} | Total Reward {:4f}'
-            print(summary.format(
-                episode + 1, num_episodes, loss, exploration_rate,
-                env.stats.fruits_eaten, env.stats.timesteps_survived, env.stats.sum_episode_rewards,
-            ))
+            if episode%50==0:
+                summary = 'Episode {:5d}/{:5d} | Loss {:8.4f} | Exploration {:.2f} | ' + \
+                          'Fruits {:2d} | Timesteps {:4d} | Total Reward {:4f}'
+                print(summary.format(
+                    episode + 1, num_episodes, loss, exploration_rate,
+                    env.stats.fruits_eaten, env.stats.timesteps_survived, env.stats.sum_episode_rewards,
+                ))
 
         self.model.save('dqn-final.model')
 
