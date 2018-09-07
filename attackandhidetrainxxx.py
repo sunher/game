@@ -156,7 +156,8 @@ def load_model(filename):
 
 def main():
     parsed_args = parse_command_line_args(sys.argv[1:])
-
+    import os
+    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
     env1 = create_snake_environment(parsed_args.level1)
     env2 = create_snake_environment(parsed_args.level2)
     env3 = create_snake_environment(parsed_args.level3)
