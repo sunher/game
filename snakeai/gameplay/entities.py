@@ -30,7 +30,7 @@ class CellType(object):
     FRUIT = 1
     SNAKE_HEAD = 3
     SNAKE_BODY = -1
-    WALL = -2
+    WALL = -1
     POISON = -3
 
 
