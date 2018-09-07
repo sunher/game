@@ -78,7 +78,7 @@ class Environment(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=0,
-            is_episode_self.is_game_over
+            is_episode_=self.is_game_over
         )
 
         self.record_timestep_stats(result)
@@ -274,7 +274,7 @@ class Environment(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=reward,
-            is_episode_self.is_game_over
+            is_episode_end = self.is_game_over
         )
 
         self.record_timestep_stats(result)

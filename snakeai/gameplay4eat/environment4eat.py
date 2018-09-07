@@ -83,7 +83,7 @@ class Environment4Eat(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=0,
-            is_episode_self.is_game_over
+            is_episode_end=self.is_game_over
         )
 
         self.record_timestep_stats(result)
@@ -93,7 +93,7 @@ class Environment4Eat(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=0,
-            is_episode_self.is_game_over
+            is_episode_end=self.is_game_over
         )
 
         self.record_timestep_stats(result)
@@ -107,7 +107,7 @@ class Environment4Eat(object):
         if self.verbose >= 1 and self.stats_file is None:
             self.stats_file = open('snake-env-{timestamp}.csv', 'w')
             stats_csv_header_line = self.stats.to_dataframe()[:0].to_csv(index=None)
-            print(stats_csv_header_line, self.stats_file, '', flush=True)
+            # print(stats_csv_header_line, self.stats_file, '', flush=True)
 
         # Create a blank debug log file.
         # if self.verbose >= 2 and self.debug_file is None:
@@ -443,7 +443,7 @@ class Environment4Eat(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=reward,
-            is_episode_self.is_game_over
+            is_episode_end=self.is_game_over
         )
 
         self.record_timestep_stats(result)
