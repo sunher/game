@@ -9,7 +9,7 @@ from keras.models import Sequential
 from keras.layers import *
 from keras.optimizers import *
 
-from snakeai.agent.ddqnxx import DoubleDeepQNetworkAgent
+from snakeai.agent.dqnxx import DoubleDeepQNetworkAgent
 from snakeai.gameplay.environment import Environment
 from snakeai.gameplay4eat.environment4eat import Environment4Eat
 from snakeai.utils.cli import HelpOnFailArgumentParser

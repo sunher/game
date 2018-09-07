@@ -4,7 +4,7 @@ import json
 import numpy as np
 
 from .entities import ALL_SNAKE_ACTIONS
-from .environment import Environment
+from .environment4eat import Environment
 
 
 class OpenAIGymEnvAdapter(object):
