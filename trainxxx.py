@@ -112,7 +112,7 @@ def create_dqn_model(env, num_last_frames):
     # Convolutions.
     model.add(Conv2D(
         64,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first',
         input_shape=(num_last_frames,) + env.observation_shape
@@ -120,26 +120,18 @@ def create_dqn_model(env, num_last_frames):
     model.add(Activation('relu'))
     model.add(Conv2D(
         128,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
     model.add(Conv2D(
         256,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
-    model.add(Conv2D(
-        256,
-        kernel_size=(3, 3),
-        strides=(1, 1),
-        data_format='channels_first'
-    ))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
     # Dense layers.
     model.add(Flatten())
     model.add(Dense(1024))
@@ -181,11 +173,11 @@ def main():
     )
     agent.train(
         env1,
-        env2,
-        env3,
-        env4,
-        env5,
-        env6,
+        env1,
+        env1,
+        env1,
+        env1,
+        env1,
         batch_size=64,
         num_episodes=parsed_args.num_episodes,
         checkpoint_freq=parsed_args.num_episodes // 10, exploration_range=(1.0, 0.1),
