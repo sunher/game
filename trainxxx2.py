@@ -132,17 +132,9 @@ def create_dqn_model(env, num_last_frames):
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
-    model.add(Conv2D(
-        256,
-        kernel_size=(3, 3),
-        strides=(1, 1),
-        data_format='channels_first'
-    ))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
     # Dense layers.
     model.add(Flatten())
-    model.add(Dense(1024))
+    model.add(Dense(1648))
     model.add(Activation('relu'))
     model.add(Dense(env.num_actions))
 
@@ -162,7 +154,7 @@ def load_model(filename):
 def main():
     parsed_args = parse_command_line_args(sys.argv[1:])
     import os
-    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
     env1 = create_snake_environment(parsed_args.level1)
     env2 = create_snake_environment(parsed_args.level2)
     env3 = create_snake_environment(parsed_args.level3)
