@@ -225,19 +225,16 @@ class EnvironmentAttackAndHidePoison(object):
             #     reward = self.get_wall_num(old_head) - self.fruit.__len__()
             # else:
             #     reward = -1
-            if self.fruit.__len__() < 2:
-                reward = (self.get_wall_num(old_head) - 1.5)
+
+            if len(self.fruit) != 0:
+                if self.stats.fruits_eaten == 0:
+                    reward = self.rewards['died']
+                else:
+                    reward += 0.73 * self.get_wall_num(old_head) - self.fruit.__len__()/2.5
             else:
-                reward = (self.get_wall_num(old_head) - self.fruit.__len__())
-                reward /= 2
+                reward += 0.73 * self.get_wall_num(old_head)
             if self.snake.length == 2 or self.snake.length == 1:
                 reward = -1
-
-            # if self.stats.poisons_eaten != 0:
-            #     reward -= 2
-
-            # if (self.be_poison(old_head)):
-            #     reward -= 1
 
             # reward += 0.99
         # Exceeded the limit of moves?
