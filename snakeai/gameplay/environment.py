@@ -213,7 +213,7 @@ class Environment(object):
 
         # Hit a wall or own body?
         if not self.is_alive()  or self.fruit.__len__() == 0:
-            reward -= self.fruit.__len__()
+           # reward -= self.fruit.__len__()
             if self.has_hit_wall():
                 reward -= 0.7
                 self.stats.termination_reason = 'hit_wall'

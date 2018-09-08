@@ -213,7 +213,7 @@ class EnvironmentAttackAndHide(object):
 
         # Hit a wall or own body?
         if not self.is_alive():
-            reward -= self.fruit.__len__()
+            #reward -= self.fruit.__len__()
             if self.has_hit_wall():
                 self.stats.termination_reason = 'hit_wall'
             if self.has_hit_own_body():
@@ -225,7 +225,7 @@ class EnvironmentAttackAndHide(object):
                 reward -= 1
 
             if self.stats.poisons_eaten != 0:
-                reward -= 2
+                reward -= 1.7
 
             if (self.be_poison(old_head)):
                 reward -= 0.5

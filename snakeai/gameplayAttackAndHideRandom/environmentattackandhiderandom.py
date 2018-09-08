@@ -412,13 +412,13 @@ class EnvironmentAttackAndHideRandom(object):
         # Hit a wall or own body?
         # Hit a wall or own body?
         if not self.is_alive():
-            reward -= self.fruit.__len__()
+            #reward -= self.fruit.__len__()
             if self.has_hit_wall():
                 self.stats.termination_reason = 'hit_wall'
             if self.has_hit_own_body():
                 self.stats.termination_reason = 'hit_own_body'
 
-            reward += self.get_wall_num(old_head) - 2
+            reward += self.get_wall_num(old_head) - 21.7
 
             if self.snake.length == 2 or self.snake.length == 1:
                 reward -= 1
