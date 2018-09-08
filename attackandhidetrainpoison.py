@@ -140,7 +140,7 @@ def create_dqn_model(env, num_last_frames):
 
     # Dense layers.
     model.add(Flatten())
-    model.add(Dense(1324))
+    model.add(Dense(1000))
     model.add(Activation('relu'))
     model.add(Dense(env.num_actions))
 
@@ -179,11 +179,11 @@ def main():
     )
     agent.train(
         env1,
-        env1,
-        env1,
-        env1,
-        env1,
-        env1,
+        env2,
+        env3,
+        env4,
+        env5,
+        env6,
         batch_size=64,
         num_episodes=parsed_args.num_episodes,
         checkpoint_freq=parsed_args.num_episodes // 10, exploration_range=(1.0, 0.1),
