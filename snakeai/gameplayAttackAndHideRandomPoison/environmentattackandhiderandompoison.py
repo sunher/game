@@ -422,6 +422,7 @@ class EnvironmentAttackAndHideRandomPoison(object):
                 reward = (self.get_wall_num(old_head) - 1.5)
             else:
                 reward = (self.get_wall_num(old_head) - self.fruit.__len__())
+                reward /= 2
             if self.snake.length == 2 or self.snake.length == 1:
                 reward = -1
 

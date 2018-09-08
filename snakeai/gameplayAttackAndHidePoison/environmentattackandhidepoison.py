@@ -223,6 +223,7 @@ class EnvironmentAttackAndHidePoison(object):
                 reward = (self.get_wall_num(old_head) - 1.5)
             else:
                 reward = (self.get_wall_num(old_head) - self.fruit.__len__())
+                reward /= 2
             if self.snake.length == 2 or self.snake.length == 1:
                 reward = -1
 
@@ -246,6 +247,7 @@ class EnvironmentAttackAndHidePoison(object):
 
         self.record_timestep_stats(result)
         return result
+
 
     def get_wall_num(self, position=None):
         num = 0
