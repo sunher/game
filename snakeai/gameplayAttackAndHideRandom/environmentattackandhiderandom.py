@@ -410,25 +410,30 @@ class EnvironmentAttackAndHideRandom(object):
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
-        # Hit a wall or own body?
         if not self.is_alive():
-            #reward -= self.fruit.__len__()
-            if self.has_hit_wall():
+            #    reward -=self.fruit.__len__()
+            if self.has_hit_wall() or self.has_hit_own_body():
                 self.stats.termination_reason = 'hit_wall'
-            if self.has_hit_own_body():
-                self.stats.termination_reason = 'hit_own_body'
-
-            reward += self.get_wall_num(old_head) - 21.7
-
+                reward -= 0.7
+                isdie = True
+            self.field[self.snake.head] = CellType.SNAKE_HEAD
+            self.is_game_over = True
+            # reward *= 0.7
+            # print(self.fruit.__len__())
+            # if(self.get_wall_num(old_head) >= 2) and self.fruit.__len__()<=1:
+            #     reward = self.get_wall_num(old_head) - self.fruit.__len__()
+            # else:
+            #     reward = -1
+            reward += (self.get_wall_num(old_head) - 1.5)
             if self.snake.length == 2 or self.snake.length == 1:
-                reward -= 1
+                reward -= 2
 
             if self.stats.poisons_eaten != 0:
                 reward -= 2
 
             if (self.be_poison(old_head)):
-                reward -= 0.5
-            self.is_game_over = True
+                reward -= 1
+
             # reward += 0.99
         # Exceeded the limit of moves?
         if self.timestep_index >= self.max_step_limit:

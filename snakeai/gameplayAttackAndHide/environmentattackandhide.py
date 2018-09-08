@@ -192,9 +192,10 @@ class EnvironmentAttackAndHide(object):
 
         self.timestep_index += 1
         reward = 0
-
+        isdie = False
         old_head = self.snake.head
         old_tail = self.snake.tail
+
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
             self.fruit.remove(self.snake.peek_next_move())
@@ -207,30 +208,35 @@ class EnvironmentAttackAndHide(object):
         # If not, just move forward.
 
         self.snake.move()
-        reward += self.rewards['timestep']
 
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
         if not self.is_alive():
-            #reward -= self.fruit.__len__()
-            if self.has_hit_wall():
+        #    reward -=self.fruit.__len__()
+            if self.has_hit_wall() or self.has_hit_own_body():
                 self.stats.termination_reason = 'hit_wall'
-            if self.has_hit_own_body():
-                self.stats.termination_reason = 'hit_own_body'
-
-            reward += self.get_wall_num(old_head)-2
-
+                reward -= 0.7
+                isdie = True
+            self.field[self.snake.head] = CellType.SNAKE_HEAD
+            self.is_game_over = True
+            # reward *= 0.7
+            # print(self.fruit.__len__())
+            # if(self.get_wall_num(old_head) >= 2) and self.fruit.__len__()<=1:
+            #     reward = self.get_wall_num(old_head) - self.fruit.__len__()
+            # else:
+            #     reward = -1
+            reward += (self.get_wall_num(old_head)-1.5)
             if self.snake.length == 2 or self.snake.length == 1:
-                reward -= 1
+                reward -= 2
 
             if self.stats.poisons_eaten != 0:
-                reward -= 1.7
+                reward -= 2
 
             if (self.be_poison(old_head)):
-                reward -= 0.5
+                reward -= 1
 
-            self.is_game_over = True
+            # reward += 0.99
         # Exceeded the limit of moves?
         if self.timestep_index >= self.max_step_limit:
             self.is_game_over = True
@@ -239,7 +245,7 @@ class EnvironmentAttackAndHide(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=reward,
-            is_episode_end = self.is_game_over
+            is_episode_end=self.is_game_over
         )
 
         self.record_timestep_stats(result)
