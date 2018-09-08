@@ -1,0 +1,1 @@
+/sda/tensorflow1.2.0/bin/python trainxxx4test.py  --level1 snakeai/levels/1.json --level2 snakeai/levels/2.json --level3 snakeai/levels/3.json --level4 snakeai/levels/4.json --level5 snakeai/levels/5.json --level6 snakeai/levels/blank.json  --num-episodes 20000 > running.log &
