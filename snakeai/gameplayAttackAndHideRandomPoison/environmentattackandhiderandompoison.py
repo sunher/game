@@ -328,9 +328,15 @@ class EnvironmentAttackAndHideRandomPoison(object):
 
     def generate_emeny(self, position=None):
         """ Generate a new fruit at a random unoccupied cell. """
+        list = self.field.get_empty_cell()
         if position is None:
-            position = self.field.get_random_empty_cell()
-            self.enemy = position
+            position = random.choice(list)
+            if np.random.random() < 0.75:
+                while self.get_wall_num(position) < 1.5:
+                    list.remove(position)
+                    position = random.choice(list)
+
+        self.enemy = position
         self.field[position] = CellType.SNAKE_BODY
         if np.random.random() > 0.2:
             if (self.field[position + SnakeDirection.NORTH] == CellType.EMPTY):
