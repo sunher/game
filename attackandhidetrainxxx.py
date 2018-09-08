@@ -114,7 +114,7 @@ def create_dqn_model(env, num_last_frames):
     # Convolutions.
     model.add(Conv2D(
         64,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first',
         input_shape=(num_last_frames,) + env.observation_shape
@@ -122,22 +122,22 @@ def create_dqn_model(env, num_last_frames):
     model.add(Activation('relu'))
     model.add(Conv2D(
         128,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
     model.add(Conv2D(
         256,
-        kernel_size=(3, 3),
+        kernel_size=(2, 2),
         strides=(1, 1),
         data_format='channels_first'
     ))
     model.add(Activation('relu'))
-    model.add(Dropout(0.1))
+
     # Dense layers.
     model.add(Flatten())
-    model.add(Dense(1024))
+    model.add(Dense(1324))
     model.add(Activation('relu'))
     model.add(Dense(env.num_actions))
 
