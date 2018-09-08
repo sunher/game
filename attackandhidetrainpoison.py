@@ -140,7 +140,9 @@ def create_dqn_model(env, num_last_frames):
 
     # Dense layers.
     model.add(Flatten())
-    model.add(Dense(1324))
+    model.add(Dense(
+
+    ))
     model.add(Activation('relu'))
     model.add(Dense(env.num_actions))
 
