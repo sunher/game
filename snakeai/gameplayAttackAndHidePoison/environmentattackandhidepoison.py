@@ -63,7 +63,7 @@ class EnvironmentAttackAndHidePoison(object):
         self.field.create_level()
         self.stats.reset()
         self.timestep_index = 0
-
+        self.generate_poison()
         self.enemy = None
         self.fruit = []
         self.poison = []
@@ -72,7 +72,7 @@ class EnvironmentAttackAndHidePoison(object):
         self.snake = Snake(self.field.get_random_empty_cell(), length=self.initial_snake_length)
         self.field.place_snake(self.snake)
         self.generate_emeny()
-        self.generate_poison()
+        # self.generate_poison()
         self.current_action = None
         self.is_game_over = False
 
@@ -170,23 +170,18 @@ class EnvironmentAttackAndHidePoison(object):
 
     def generate_poison(self):
         """ Generate a new fruit at a random unoccupied cell. """
-        if np.random.random() < 3:
-            self.poison_num = random.Random().choice([1,2, 3,4])
+        if np.random.random() < 0.5:
+            if np.random.random() < 0.8:
+                self.poison_num = random.Random().choice([1, 2])
+            else:
+                self.poison_num = random.Random().choice([2, 3, 4])
             for position in self.field.get_empty_cell():
                 if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
                         position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
                         self.field.size - 1)):
-                    self.field[position] = CellType.POISON
+                    self.field[position] = CellType.WALL
                     self.poison.append(position)
 
-    def be_poison(self, position):
-        """ Generate a new fruit at a random unoccupied cell. """
-        # if np.random.random() < 1:
-        if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
-                position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
-                self.field.size - 1)):
-            return True
-        return False
 
     def timestep(self):
         """ Execute the timestep and return the new observable state. """
@@ -197,9 +192,6 @@ class EnvironmentAttackAndHidePoison(object):
         old_head = self.snake.head
         old_tail = self.snake.tail
 
-        if (self.be_poison(old_head)):
-            self.isPoison = True
-
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
             self.fruit.remove(self.snake.peek_next_move())
@@ -207,11 +199,6 @@ class EnvironmentAttackAndHidePoison(object):
             # old_tail = None
             reward += self.rewards['ate_fruit']
             self.stats.fruits_eaten += 1
-        elif self.be_poison(self.snake.peek_next_move()):
-            if not self.isPoison:
-                self.isPoison = True
-                reward -= 2
-            self.stats.poisons_eaten += 1
         # If not, just move forward.
 
         self.snake.move()
@@ -233,11 +220,11 @@ class EnvironmentAttackAndHidePoison(object):
             # else:
             #     reward = -1
             if self.fruit.__len__() < 2:
-                reward += (self.get_wall_num(old_head) - 1.5)
+                reward = (self.get_wall_num(old_head) - 1.5)
             else:
-                reward += (self.get_wall_num(old_head) - self.fruit.__len__())
+                reward = (self.get_wall_num(old_head) - self.fruit.__len__())
             if self.snake.length == 2 or self.snake.length == 1:
-                reward -= 2
+                reward = -1
 
             # if self.stats.poisons_eaten != 0:
             #     reward -= 2
