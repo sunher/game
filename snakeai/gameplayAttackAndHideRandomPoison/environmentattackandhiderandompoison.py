@@ -368,8 +368,8 @@ class EnvironmentAttackAndHideRandomPoison(object):
 
     def generate_poison(self):
         """ Generate a new fruit at a random unoccupied cell. """
-        if np.random.random() < 0:
-            self.poison_num = random.Random().choice([1, 2, 3])
+        if np.random.random() < 3:
+            self.poison_num = random.Random().choice([1, 2, 3 , 4])
             for position in self.field.get_empty_cell():
                 if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
                         position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
