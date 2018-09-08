@@ -217,7 +217,7 @@ class EnvironmentAttackPoison(object):
         elif self.be_poison(self.snake.peek_next_move()):
             if not self.isPoison:
                 self.isPoison = True
-                reward -= 1.3
+                reward = -1.3
             self.stats.poisons_eaten += 1
         # If not, just move forward.
 
@@ -229,7 +229,9 @@ class EnvironmentAttackPoison(object):
         if not self.is_alive() or self.fruit.__len__()==0 :
             #    reward -=self.fruit.__len__()
             if self.has_hit_wall() or self.has_hit_own_body():
-                reward -= (self.fruit.__len__()/2)
+                reward = -0.7
+            else:
+                reward = 0.7
                 self.stats.termination_reason = 'hit_wall'
                 isdie = True
             self.field[self.snake.head] = CellType.SNAKE_HEAD

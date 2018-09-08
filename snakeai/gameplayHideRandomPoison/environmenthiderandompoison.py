@@ -408,12 +408,12 @@ class EnvironmentAttackRandomPoison(object):
             self.fruit.remove(self.snake.peek_next_move())
             # self.generate_fruit()
             # old_tail = None
-            reward += self.rewards['ate_fruit']
+            reward += 0
             self.stats.fruits_eaten += 1
         elif self.be_poison(self.snake.peek_next_move()):
             if not self.isPoison:
                 self.isPoison = True
-                reward = -1.3
+                reward -= 1.3
             self.stats.poisons_eaten += 1
         # If not, just move forward.
 
@@ -422,12 +422,10 @@ class EnvironmentAttackRandomPoison(object):
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
-        if not self.is_alive() or self.fruit.__len__()==0 :
+        if not self.is_alive():
             #    reward -=self.fruit.__len__()
             if self.has_hit_wall() or self.has_hit_own_body():
-                reward = -0.7
-            else:
-                reward = 0.7
+                # reward -= (self.fruit.__len__()/2)
                 self.stats.termination_reason = 'hit_wall'
                 isdie = True
             self.field[self.snake.head] = CellType.SNAKE_HEAD
@@ -441,7 +439,7 @@ class EnvironmentAttackRandomPoison(object):
             # if self.fruit.__len__() < 2:
             #     reward += (self.get_wall_num(old_head) - 1.5)
             # else:
-            #     reward += (self.get_wall_num(old_head) - self.fruit.__len__())
+            reward += (self.get_wall_num(old_head) - 1.5)
             if self.snake.length == 2 or self.snake.length == 1:
                 reward -= 2
 

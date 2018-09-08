@@ -5,10 +5,10 @@ import time
 import numpy as np
 import pandas as pd
 
-from .entities import Snake, Field, CellType, SnakeAction, ALL_SNAKE_ACTIONS, SnakeDirection, Point
+from .entities import Snake, Field, CellType, SnakeAction, ALL_SNAKE_ACTIONS, SnakeDirection
 
 
-class EnvironmentAttackRandomPoison(object):
+class EnvironmentAttackPoison(object):
     """
     Represents the RL environment for the Snake game that implements the game logic,
     provides rewards for the agent and keeps track of game statistics.
@@ -48,9 +48,6 @@ class EnvironmentAttackRandomPoison(object):
         random.seed(value)
         np.random.seed(value)
 
-    def get_random_empty_cell(self):
-        return self.field.get_random_empty_cell()
-
     @property
     def observation_shape(self):
         """ Get the shape of the state observed at each timestep. """
@@ -64,15 +61,13 @@ class EnvironmentAttackRandomPoison(object):
     def new_episode(self):
         """ Reset the environment and begin a new episode. """
         self.field.create_level()
-        self.generate_rand_wall()
-        # print(self.field._cells)
         self.stats.reset()
         self.timestep_index = 0
 
-        self.isPoison = False
         self.enemy = None
         self.fruit = []
         self.poison = []
+        self.isPoison = False
         self.poison_num = 0
         self.snake = Snake(self.field.get_random_empty_cell(), length=self.initial_snake_length)
         self.field.place_snake(self.snake)
@@ -81,16 +76,6 @@ class EnvironmentAttackRandomPoison(object):
         self.current_action = None
         self.is_game_over = False
 
-        result = TimestepResult(
-            observation=self.get_observation(),
-            reward=0,
-            is_episode_end=self.is_game_over
-        )
-
-        self.record_timestep_stats(result)
-        return result
-
-    def getResult(self):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=0,
@@ -110,7 +95,7 @@ class EnvironmentAttackRandomPoison(object):
             stats_csv_header_line = self.stats.to_dataframe()[:0].to_csv(index=None)
             # print(stats_csv_header_line, self.stats_file, '', flush=True)
 
-        # Create a blank debug log file.
+        # # Create a blank debug log file.
         # if self.verbose >= 2 and self.debug_file is None:
         #     self.debug_file = open('snake-env-{timestamp}.log', 'w')
 
@@ -119,7 +104,7 @@ class EnvironmentAttackRandomPoison(object):
 
         # if self.verbose >= 2:
         #     print(result, self.debug_file)
-
+        #
         # # Log episode stats if the appropriate verbosity level is set.
         # if result.is_episode_end:
         #     if self.verbose >= 1:
@@ -155,184 +140,6 @@ class EnvironmentAttackRandomPoison(object):
             self.snake.turn_right()
             self.snake.turn_right()
 
-    def create_wall(self, pos):
-        # self.point(pos).type = PointType.WALL
-        self.field[pos] = CellType.WALL
-
-    def create_fix_wall_1(self):
-        wall_pos = [Point(3, 4), Point(3, 5), Point(3, 6), Point(3, 7), Point(3, 8), Point(3, 9),
-                    Point(6, 3), Point(6, 4), Point(6, 5), Point(6, 8), Point(6, 9), Point(6, 10),
-                    Point(7, 6),
-                    Point(8, 5), Point(8, 8),
-                    Point(9, 4), Point(9, 9),
-                    Point(10, 3), Point(10, 5), Point(10, 6), Point(10, 7), Point(10, 8), Point(10, 10),
-                    Point(11, 11)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_2(self):
-        wall_pos = [Point(2, 3), Point(2, 10),
-                    Point(3, 3), Point(3, 10),
-                    Point(4, 4), Point(4, 9),
-                    Point(5, 5), Point(5, 8),
-                    Point(6, 6), Point(6, 7),
-                    Point(7, 3), Point(7, 10),
-                    Point(8, 3), Point(8, 6), Point(8, 7), Point(8, 10),
-                    Point(9, 3), Point(9, 6), Point(9, 7), Point(9, 10),
-                    Point(10, 4), Point(10, 5), Point(10, 8), Point(10, 9)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_3(self):
-        wall_pos = [Point(3, 2), Point(3, 3), Point(3, 8), Point(3, 9),
-                    Point(4, 4), Point(4, 7), Point(4, 10),
-                    Point(5, 4), Point(5, 7), Point(5, 10),
-                    Point(6, 3),
-                    Point(7, 2), Point(7, 7), Point(7, 10),
-                    Point(8, 2), Point(8, 7), Point(8, 10),
-                    Point(9, 2), Point(9, 7), Point(9, 10),
-                    Point(10, 3), Point(10, 4), Point(10, 8), Point(10, 9)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_4(self):
-        wall_pos = [Point(3, 3), Point(3, 7), Point(3, 8), Point(3, 9),
-                    Point(4, 3), Point(4, 6), Point(4, 10),
-                    Point(5, 3), Point(5, 6), Point(5, 10),
-                    Point(6, 8),
-                    Point(7, 3), Point(7, 6), Point(7, 10),
-                    Point(8, 3), Point(8, 6), Point(8, 10),
-                    Point(9, 3), Point(9, 6), Point(9, 10),
-                    Point(10, 3), Point(10, 7), Point(10, 8), Point(10, 9)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_5(self):
-        wall_pos = [Point(1, 2), Point(1, 6), Point(1, 7), Point(1, 11),
-                    Point(2, 1), Point(2, 4), Point(2, 9), Point(2, 12),
-                    Point(3, 3), Point(3, 6), Point(3, 7), Point(3, 10),
-                    Point(4, 2), Point(4, 5), Point(4, 8), Point(4, 11),
-                    Point(5, 4), Point(5, 9),
-                    Point(6, 1), Point(6, 3), Point(6, 10), Point(6, 12),
-                    Point(7, 1), Point(7, 3), Point(7, 10), Point(7, 12),
-                    Point(8, 4), Point(8, 9),
-                    Point(9, 2), Point(9, 5), Point(9, 8), Point(9, 11),
-                    Point(10, 3), Point(10, 6), Point(10, 7), Point(10, 10),
-                    Point(11, 1), Point(11, 4), Point(11, 9), Point(11, 12),
-                    Point(12, 2), Point(12, 6), Point(12, 7), Point(12, 11)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_6(self):
-        wall_pos = [Point(1, 3), Point(1, 6), Point(1, 9),
-                    Point(2, 2), Point(2, 5), Point(2, 8), Point(2, 11),
-                    Point(3, 1), Point(3, 4), Point(3, 7), Point(3, 10), Point(3, 12),
-                    Point(4, 3), Point(4, 6), Point(4, 9),
-                    Point(5, 2), Point(5, 8), Point(5, 11),
-                    Point(6, 1), Point(6, 4), Point(6, 12),
-                    Point(7, 3), Point(7, 10),
-                    Point(8, 2), Point(8, 5), Point(8, 8), Point(8, 11),
-                    Point(9, 1), Point(9, 4), Point(9, 6), Point(9, 9), Point(9, 12),
-                    Point(10, 3), Point(10, 7), Point(10, 10),
-                    Point(11, 2), Point(11, 5), Point(11, 8), Point(11, 11),
-                    Point(12, 3), Point(12, 6), Point(12, 9), Point(12, 12)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_7(self):
-        wall_pos = [Point(2, 2), Point(2, 11),
-                    Point(3, 3), Point(3, 4), Point(3, 5), Point(3, 6), Point(3, 7), Point(3, 8), Point(3, 9),
-                    Point(3, 10),
-                    Point(5, 3), Point(5, 10),
-                    Point(6, 3), Point(6, 10),
-                    Point(7, 3), Point(7, 10),
-                    Point(8, 3), Point(8, 10),
-                    Point(10, 3), Point(10, 4), Point(10, 5), Point(10, 6), Point(10, 7), Point(10, 8), Point(10, 9),
-                    Point(10, 10),
-                    Point(11, 2), Point(11, 11)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_8(self):
-        wall_pos = [Point(1, 3), Point(1, 4), Point(1, 9), Point(1, 10),
-                    Point(2, 3), Point(2, 4), Point(2, 9), Point(2, 10),
-                    Point(3, 3), Point(3, 4), Point(3, 9), Point(3, 10),
-                    Point(6, 1), Point(6, 2), Point(6, 3), Point(6, 4), Point(6, 9), Point(6, 10), Point(6, 11),
-                    Point(6, 12),
-                    Point(7, 1), Point(7, 2), Point(7, 3), Point(7, 4), Point(7, 9), Point(7, 10), Point(7, 11),
-                    Point(7, 12),
-                    Point(10, 3), Point(10, 4), Point(10, 9), Point(10, 10),
-                    Point(11, 3), Point(11, 4), Point(11, 9), Point(11, 10),
-                    Point(12, 3), Point(12, 4), Point(12, 9), Point(12, 10)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def create_fix_wall_9(self):
-        wall_pos = [Point(3, 5), Point(3, 6),
-                    Point(4, 4), Point(4, 10),
-                    Point(5, 4), Point(5, 5), Point(5, 7), Point(5, 8), Point(5, 9),
-                    Point(6, 4), Point(6, 9),
-                    Point(7, 3),
-                    Point(8, 5), Point(8, 6), Point(8, 7), Point(8, 8),
-                    Point(9, 2), Point(9, 6),
-                    Point(10, 3), Point(10, 4), Point(10, 6), Point(10, 10),
-                    Point(11, 2), Point(11, 9), Point(11, 11),
-                    Point(12, 10)]
-        for pos in wall_pos:
-            self.create_wall(pos)
-
-    def generate_rand_wall(self):
-        fixnum = np.random.uniform()
-        if fixnum < 0.5:
-            randomnum = np.random.randint(1, 9)
-            funlist = {1: self.create_fix_wall_1, 2: self.create_fix_wall_2, 3: self.create_fix_wall_3,
-                       4: self.create_fix_wall_4, 5: self.create_fix_wall_5, 6: self.create_fix_wall_6,
-                       7: self.create_fix_wall_7, 8: self.create_fix_wall_8, 9: self.create_fix_wall_9}
-            funlist[randomnum]()
-            return
-        self.generate_wall()
-
-        # empty_pos = []
-        # for i in range(1, self._num_rows - 1):
-        #     for j in range(1, self._num_cols - 1):
-        #         t = self._content[i][j].type
-        #         if t == PointType.EMPTY:
-        #             empty_pos.append(Pos(i, j))
-
-        # empty_pos = self.field.get_empty_cell()
-        # wall num
-        # wallNum = np.random.randint(10, 50)
-        # wall4rate = np.random.uniform()
-        # h_pos = None
-        # if wall4rate < 0.5:
-        #     if empty_pos:
-        #         h_pos = random.choice(empty_pos)
-        #         w_pos1 = h_pos.adj(Direc.LEFT)
-        #         w_pos2 = h_pos.adj(Direc.UP)
-        #         w_pos3 = h_pos.adj(Direc.RIGHT)
-        #         w_pos4 = h_pos.adj(Direc.DOWN)
-        #         for pos in [w_pos1, w_pos2, w_pos3, w_pos4]:
-        #             if pos in empty_pos:
-        #                 self.create_wall(pos)
-        #                 empty_pos.remove(pos)
-        #                 wallNum -= 1
-
-        # while wallNum > 0:
-        #     w_pos = random.choice(empty_pos)
-        #     if h_pos != w_pos:
-        #         self.create_wall(w_pos)
-        #         empty_pos.remove(w_pos)
-        #         wallNum -= 1
-
-    def generate_wall(self):
-        # emptyNum = len(self.field._empty_cells)
-        randnum = np.random.randint(10, 60)
-        i=0
-        while(i<randnum):
-            pos = random.choice(self.field.get_empty_cell())
-            i+=1
-            self.field[pos] = CellType.WALL
-
     def generate_emeny(self, position=None):
         """ Generate a new fruit at a random unoccupied cell. """
         list = self.field.get_empty_cell()
@@ -342,6 +149,8 @@ class EnvironmentAttackRandomPoison(object):
                 while self.get_wall_num(position) < 1.5:
                     list.remove(position)
                     position = random.choice(list)
+
+
         self.enemy = position
         self.field[position] = CellType.SNAKE_BODY
         if np.random.random() > 0.2:
@@ -366,15 +175,10 @@ class EnvironmentAttackRandomPoison(object):
                 self.field[position] = CellType.FRUIT
                 self.fruit.append(position)
 
-    def generate_snake(self, snake=None):
-        """ Generate a new fruit at a random unoccupied cell. """
-        self.snake = snake
-        self.field.place_snake(self.snake)
-
     def generate_poison(self):
         """ Generate a new fruit at a random unoccupied cell. """
         if np.random.random() < 3:
-            self.poison_num = random.Random().choice([1, 2, 3 , 4])
+            self.poison_num = random.Random().choice([1,2, 3,4])
             for position in self.field.get_empty_cell():
                 if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
                         position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
@@ -408,12 +212,12 @@ class EnvironmentAttackRandomPoison(object):
             self.fruit.remove(self.snake.peek_next_move())
             # self.generate_fruit()
             # old_tail = None
-            reward += self.rewards['ate_fruit']
+            reward += 0
             self.stats.fruits_eaten += 1
         elif self.be_poison(self.snake.peek_next_move()):
             if not self.isPoison:
                 self.isPoison = True
-                reward = -1.3
+                reward -= 1.3
             self.stats.poisons_eaten += 1
         # If not, just move forward.
 
@@ -422,12 +226,10 @@ class EnvironmentAttackRandomPoison(object):
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
-        if not self.is_alive() or self.fruit.__len__()==0 :
+        if not self.is_alive():
             #    reward -=self.fruit.__len__()
             if self.has_hit_wall() or self.has_hit_own_body():
-                reward = -0.7
-            else:
-                reward = 0.7
+                # reward -= (self.fruit.__len__()/2)
                 self.stats.termination_reason = 'hit_wall'
                 isdie = True
             self.field[self.snake.head] = CellType.SNAKE_HEAD
@@ -441,7 +243,7 @@ class EnvironmentAttackRandomPoison(object):
             # if self.fruit.__len__() < 2:
             #     reward += (self.get_wall_num(old_head) - 1.5)
             # else:
-            #     reward += (self.get_wall_num(old_head) - self.fruit.__len__())
+            reward += (self.get_wall_num(old_head) - 1.5)
             if self.snake.length == 2 or self.snake.length == 1:
                 reward -= 2
 
@@ -478,16 +280,16 @@ class EnvironmentAttackRandomPoison(object):
             num += 1
         if self.field[
             position + SnakeDirection.NORTH] == CellType.POISON:
-            num += 0.5
+            num += 0.7
         if self.field[
             position + SnakeDirection.SOUTH] == CellType.POISON:
-            num += 0.5
+            num += 0.7
         if self.field[
             position + SnakeDirection.WEST] == CellType.POISON:
-            num += 0.5
+            num += 0.7
         if self.field[
             position + SnakeDirection.EAST] == CellType.POISON:
-            num += 0.5
+            num += 0.7
         return num
 
     def generate_fruit(self, position=None):
@@ -495,7 +297,7 @@ class EnvironmentAttackRandomPoison(object):
         if position is None:
             position = self.field.get_random_empty_cell()
         self.field[position] = CellType.FRUIT
-        self.fruit.append(position)
+        self.fruit = position
 
     def has_hit_wall(self):
         """ True if the snake has hit a wall, False otherwise. """
