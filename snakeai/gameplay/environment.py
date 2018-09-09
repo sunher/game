@@ -63,15 +63,16 @@ class Environment(object):
         self.field.create_level()
         self.stats.reset()
         self.timestep_index = 0
-
+        self.generate_poison()
         self.enemy = None
         self.fruit = []
         self.poison = []
+        self.isPoison = False
         self.poison_num = 0
         self.snake = Snake(self.field.get_random_empty_cell(), length=self.initial_snake_length)
         self.field.place_snake(self.snake)
         self.generate_emeny()
-        self.generate_poison()
+        # self.generate_poison()
         self.current_action = None
         self.is_game_over = False
 
@@ -141,9 +142,15 @@ class Environment(object):
 
     def generate_emeny(self, position=None):
         """ Generate a new fruit at a random unoccupied cell. """
+        list = self.field.get_empty_cell()
         if position is None:
-            position = self.field.get_random_empty_cell()
-            self.enemy = position
+            position = random.choice(list)
+            if np.random.random() < 0.75:
+                while self.get_wall_num(position) < 1.5:
+                    list.remove(position)
+                    position = random.choice(list)
+
+        self.enemy = position
         self.field[position] = CellType.SNAKE_BODY
         if np.random.random() > 0.2:
             if (self.field[position + SnakeDirection.NORTH] == CellType.EMPTY):
@@ -169,67 +176,62 @@ class Environment(object):
 
     def generate_poison(self):
         """ Generate a new fruit at a random unoccupied cell. """
-        if np.random.random() < 0:
-            self.poison_num = random.Random().choice([2, 3])
+        if np.random.random() < 0.3:
+            if np.random.random() < 0.8:
+                self.poison_num = random.Random().choice([1, 2])
+            else:
+                self.poison_num = random.Random().choice([2, 3, 4])
             for position in self.field.get_empty_cell():
                 if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
                         position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
                         self.field.size - 1)):
-                    self.field[position] = CellType.POISON
+                    self.field[position] = CellType.WALL
                     self.poison.append(position)
 
-    def be_poison(self, position):
-        """ Generate a new fruit at a random unoccupied cell. """
-        # if np.random.random() < 1:
-        if (0 < position.x <= self.poison_num or 0 < position.y <= self.poison_num or (
-                position.x + self.poison_num) >= (self.field.size - 1) or (position.y + self.poison_num) >= (
-                self.field.size - 1)):
-            return True
-        return False
 
     def timestep(self):
         """ Execute the timestep and return the new observable state. """
 
         self.timestep_index += 1
         reward = 0
-
+        isdie = False
         old_head = self.snake.head
         old_tail = self.snake.tail
+
         # Are we about to eat the fruit?
         if self.fruit.__contains__(self.snake.peek_next_move()):
             self.fruit.remove(self.snake.peek_next_move())
             # self.generate_fruit()
             # old_tail = None
-            reward += self.rewards['ate_fruit']
+            reward = self.rewards['ate_fruit'] + self.stats.fruits_eaten
             self.stats.fruits_eaten += 1
-        elif self.be_poison(self.snake.peek_next_move()):
-            self.stats.poisons_eaten += 1
         # If not, just move forward.
 
         self.snake.move()
-        reward += self.rewards['timestep']
 
         self.field.update_snake_footprint(old_head, old_tail, self.snake.head)
 
         # Hit a wall or own body?
-        if not self.is_alive()  or self.fruit.__len__() == 0:
-           # reward -= self.fruit.__len__()
-            if self.has_hit_wall():
-                reward -= 0.7
+        if not self.is_alive() or self.fruit.__len__()==0:
+            #    reward -=self.fruit.__len__()
+            if self.has_hit_wall() or self.has_hit_own_body():
                 self.stats.termination_reason = 'hit_wall'
-            if self.has_hit_own_body():
-                self.stats.termination_reason = 'hit_own_body'
+                isdie = True
+            self.field[self.snake.head] = CellType.SNAKE_HEAD
+            self.is_game_over = True
+            # reward *= 0.7
+            # print(self.fruit.__len__())
+            # if(self.get_wall_num(old_head) >= 2) and self.fruit.__len__()<=1:
+            #     reward = self.get_wall_num(old_head) - self.fruit.__len__()
+            # else:
+            #     reward = -1
+            if self.fruit.__len__() > 1.5:
+                reward = -1
 
             if self.snake.length == 2 or self.snake.length == 1:
-                reward -= 2
+                reward = -1
 
-            if self.stats.poisons_eaten != 0:
-                reward -= 2
-
-            if (self.be_poison(old_head)):
-                reward -= 1
-
-            self.is_game_over = True
+            # reward += 0.99
         # Exceeded the limit of moves?
         if self.timestep_index >= self.max_step_limit:
             self.is_game_over = True
@@ -238,11 +240,12 @@ class Environment(object):
         result = TimestepResult(
             observation=self.get_observation(),
             reward=reward,
-            is_episode_end = self.is_game_over
+            is_episode_end=self.is_game_over
         )
 
         self.record_timestep_stats(result)
         return result
+
 
     def get_wall_num(self, position=None):
         num = 0

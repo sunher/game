@@ -91,7 +91,7 @@ class DoubleDeepQNetworkAgent(AgentBase):
                                           env3,
                                           env4,
                                           env5,
-                                          env6, env6, env6, env6])
+                                          env6, env6, env6, env6 , env6])
             # Reset the environment for the new episode.
             timestep = env.new_episode()
             self.begin_episode()
