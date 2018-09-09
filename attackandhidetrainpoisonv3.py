@@ -8,6 +8,7 @@ import sys
 from keras.models import Sequential
 from keras.layers import *
 from keras.optimizers import *
+from keras import Model
 
 from snakeai.agent.dqnxx import DoubleDeepQNetworkAgent
 from snakeai.gameplay.environment import Environment
