@@ -28,9 +28,9 @@ class CellType(object):
 
     EMPTY = 0
     FRUIT = 1
-    SNAKE_HEAD = 100
-    SNAKE_BODY = 2
-    WALL = 50
+    SNAKE_HEAD = 3
+    SNAKE_BODY = -1
+    WALL = -2
     POISON = -3
 
 
