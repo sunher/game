@@ -8,7 +8,6 @@ import sys
 from keras.models import Sequential
 from keras.layers import *
 from keras.optimizers import *
-from keras import Model
 
 from snakeai.agent.dqnxx import DoubleDeepQNetworkAgent
 from snakeai.gameplay.environment import Environment
@@ -113,34 +112,41 @@ def create_dqn_model(env, num_last_frames):
         A compiled DQN model.
     """
 
-    inp = Input(shape=((num_last_frames,) + env.observation_shape))
-    x = Convolution2D(32, kernel_size=(3, 3), strides=(1, 1), data_format='channels_first')(inp)
-    x = Activation('relu')(x)
-    x = Convolution2D(64, kernel_size=(3, 3), strides=(1, 1), data_format='channels_first')(x)
-    x = Activation('relu')(x)
-    x = Convolution2D(128, kernel_size=(2, 2), strides=(1, 1), data_format='channels_first')(x)
-    x = Activation('relu')(x)
-    x = Convolution2D(256, kernel_size=(2, 2), strides=(1, 1), data_format='channels_first')(x)
-    x = Activation('relu')(x)
+    model = Sequential()
 
-    layer_shared2 = Flatten()(x)
-    print("Shared layers initialized....")
+    # Convolutions.
+    model.add(Conv2D(
+        64,
+        kernel_size=(3, 3),
+        strides=(1, 1),
+        data_format='channels_first',
+        input_shape=(num_last_frames,) + env.observation_shape
+    ))
+    model.add(Activation('relu'))
+    model.add(Conv2D(
+        128,
+        kernel_size=(2, 2),
+        strides=(1, 1),
+        data_format='channels_first'
+    ))
+    model.add(Activation('relu'))
+    model.add(Conv2D(
+        192,
+        kernel_size=(2, 2),
+        strides=(1, 1),
+        data_format='channels_first'
+    ))
+    model.add(Activation('relu'))
 
-    x = Dense(1024, activation='relu', kernel_initializer='he_uniform')(layer_shared2)
-    x = Activation('relu')(x)
-    x = Dense(512, activation='relu', kernel_initializer='he_uniform')(x)
-    h = Activation('relu')(x)
-    y = Dense(env.num_actions + 1)(h)
-    z = Lambda(lambda a: K.expand_dims(a[:, 0]) + a[:, 1:] - K.mean(a[:, 1:], keepdims=True),
-               output_shape=(env.num_actions,))(y)
-    # layer_q = Lambda(lambda x: x[0][:] + x[1][:] - K.mean(x[1][:]), output_shape=(env.action_space.n,))([layer_v, layer_a])
-    # layer_q = Lambda(lambda x: x[0][:] + x[1][:] - K.mean(x[1][:]), output_shape=(env.num_actions,))(y)
+    # Dense layers.
+    model.add(Flatten())
+    model.add(Dense(1024))
+    model.add(Activation('relu'))
+    model.add(Dense(env.num_actions))
 
-    print("Q-function layer initialized.... :)\n")
-
-    model = Model(inp, z)
     model.summary()
-    model.compile(optimizer=Adam(), loss='mse')
+    model.compile(Adam(), 'MSE')
+
     return model
 
 
@@ -154,7 +160,7 @@ def load_model(filename):
 def main():
     parsed_args = parse_command_line_args(sys.argv[1:])
     import os
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     env1 = create_snake_environment(parsed_args.level1)
     env2 = create_snake_environment(parsed_args.level2)
     env3 = create_snake_environment(parsed_args.level3)
@@ -172,12 +178,12 @@ def main():
         num_last_frames=model.input_shape[1]
     )
     agent.train(
-        env1,
-        env1,
-        env1,
-        env1,
-        env1,
-        env1,
+        env2,
+        env2,
+        env2,
+        env2,
+        env2,
+        env2,
         batch_size=64,
         num_episodes=parsed_args.num_episodes,
         checkpoint_freq=parsed_args.num_episodes // 10, exploration_range=(1.0, 0.1),
