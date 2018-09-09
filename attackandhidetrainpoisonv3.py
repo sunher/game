@@ -125,7 +125,7 @@ def create_dqn_model(env, num_last_frames):
     model.add(Activation('relu'))
     model.add(Conv2D(
         128,
-        kernel_size=(2, 2),
+        kernel_size=(3, 3),
         strides=(1, 1),
         data_format='channels_first'
     ))
@@ -183,7 +183,7 @@ def main():
         env2,
         env2,
         env2,
-        env2,
+        env1,
         batch_size=64,
         num_episodes=parsed_args.num_episodes,
         checkpoint_freq=parsed_args.num_episodes // 10, exploration_range=(1.0, 0.1),
