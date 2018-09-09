@@ -176,7 +176,7 @@ class EnvironmentAttackAndHidePoison(object):
 
     def generate_poison(self):
         """ Generate a new fruit at a random unoccupied cell. """
-        if np.random.random() < 0.5:
+        if np.random.random() < 0.3:
             if np.random.random() < 0.8:
                 self.poison_num = random.Random().choice([1, 2])
             else:
